@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Cs">
+	<select id="selectAll" resultType="Cs">
+		select * from Cs order by team desc, rank asc
+	</select>
+	
+	<select id="select" parameterType="int" resultType="Cs">
+		select * from
+		cs where Cs_id=#{cs_id}
+	</select>
+	
+	<insert id="insert" parameterType="Cs">
+		insert into CS(CS_id,
+		title, writer, content, team)
+		values(seq_CS.nextval,
+		#{title},#{writer},#{content},seq_CS.nextval)
+	</insert>
+
+	<update id="update" parameterType="Cs">
+		update CS set title=#{title}, content=#{content}
+		where cs_id=#{cs_id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete from CS where cs_id = #{cs_id}
+	</delete>
+	
+	<!-- <update id="updateRank" parameterType="Cs">
+	  	<![CDATA[
+	  	update cs set rank = rank+1
+	  	where team = #{team} and rank > #{rank}  	
+	  	]]>
+  	</update> -->
+  
+  	<insert id="reply" parameterType="Cs">
+	  	insert into cs(cs_id, title, writer, content, team, rank, depth)
+	  	values(seq_cs.nextval, #{title}, #{writer}, #{content},  #{team},  #{rank}+1, #{depth}+1)
+  	</insert>
+  	
+</mapper>

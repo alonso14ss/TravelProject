@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.travel.domain.Admin" 					alias="Admin"/>
+		<typeAlias type="com.travel.domain.Product" 				alias="Product"/>
+		<typeAlias type="com.travel.domain.Member" 				alias="Member"/>
+		<typeAlias type="com.travel.domain.OrderSummary"		alias="OrderSummary"/>
+		<typeAlias type="com.travel.domain.OrderDetail"			alias="OrderDetail"/>
+		<typeAlias type="com.travel.domain.Event"					alias="Event"/>
+		<typeAlias type="com.travel.domain.Cs"					alias="Cs"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="com/travel/mybatis/AdminMapper.xml"/>
+		<mapper resource="com/travel/mybatis/ProductMapper.xml"/>
+		<mapper resource="com/travel/mybatis/MemberMapper.xml"/>
+		<mapper resource="com/travel/mybatis/OrderSummaryMapper.xml"/>
+		<mapper resource="com/travel/mybatis/OrderDetailMapper.xml"/>
+		<mapper resource="com/travel/mybatis/EventMapper.xml"/>
+		<mapper resource="com/travel/mybatis/CsMapper.xml"/>
+	</mappers>
+	
+</configuration>
+
+
+
+
+
+
+

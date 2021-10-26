@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Member">
+
+	<insert id="insert" parameterType="Member">
+		insert into member(
+		id ,password, name, email,phone,addr)
+		values( #{id},
+		#{password}, #{name}, #{email},
+		#{phone},#{addr})
+	</insert>
+
+	<select id="loginCheck" parameterType="Member"
+		resultType="Member">
+		select * from member
+		where id=#{id} and password=#{password}
+	</select>
+
+	<!-- 회원정보 1건 가져오기 -->
+	<select id="select" parameterType="int" resultType="Member">
+		select * from
+		member
+		where member_id=#{member_id}
+	</select>
+
+	<select id="idCheck" parameterType="Member" resultType="Member">
+		select *
+		from member where id=#{id}
+	</select>
+
+	<select id="selectAll" resultType="Member">
+		select * from member order by
+		member_id asc
+	</select>
+
+	<update id="update" parameterType="member">
+		update member set
+		password=#{password}, email=#{email}, addr=#{addr} where member_id =
+		#{member_id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from member where member_id=#{member_id}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

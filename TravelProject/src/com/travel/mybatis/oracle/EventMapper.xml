@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Event">
+   
+   <resultMap type="Event" id="joinMap">
+      <id column="event_id" property="event_id"/>
+         
+      <association column="product_id" property="product" 
+         javaType="Product" select="Product.select"/>         
+   </resultMap>
+   
+   <select id="eventProductSelect" resultMap="joinMap" parameterType="int">
+      select * from event where product_id=#{product_id}
+   </select> 
+   
+   <select id="selectAll" resultMap="joinMap">
+      select * from event order by end_time asc
+   </select>
+   
+   <select id="select" parameterType="int" resultMap="joinMap">
+      select * from event where event_id=#{event_id}
+   </select>
+   
+   <insert id="insert" parameterType="Event">
+      insert into event(event_id, discount,start_time,end_time,product_id)
+      values(seq_event.nextval, #{discount},#{start_time},#{end_time},#{product.product_id})
+   </insert>
+   
+   <update id="update" parameterType="Event">
+      update event set discount=#{discount}, start_time=#{start_time}, end_time=#{end_time}, product_id=#{product.product_id} 
+      where event_id=#{event_id}
+   </update>
+   
+   <delete id="delete" parameterType="int">
+      delete from event where event_id=#{event_id}
+   </delete>
+   
+   <update id="eventing" parameterType="int">
+      update event set product_id=#{product_id} where event_id=0
+   </update>
+   
+</mapper>
+

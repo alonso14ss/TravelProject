@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Product">
+
+   <select id="select" parameterType="int" resultType="Product">
+      select * from product where product_id = #{product_id}
+   </select>
+   
+   <select id="selectAll" resultType="Product">
+      <![CDATA[
+      select * from product where product_id > 0 order by product_id desc
+       ]]> 
+   </select>
+   
+   <select id="searchArrivalplace" parameterType="String" resultType="String">
+      select arrivalplace from product where departureplace=#{departureplace}
+   </select>
+   
+   <select id="search" parameterType="Product" resultType="Product">
+   <![CDATA[
+      SELECT * FROM product WHERE DEPARTUREPLACE =#{departureplace}
+       AND ARRIVALPLACE =#{arrivalplace} 
+       AND DEPARTUREDATE >= #{departuredate} 
+       AND #{arrivaldate} >= ARRIVALDATE 
+       AND price >= #{minPrice} 
+       AND #{maxPrice} >= price
+       ]]> 
+   </select>
+   
+   <insert id="insert" parameterType="Product">
+      insert into product(product_id, departureplace, arrivalplace, price, filename, personal,product_name,departuredate,arrivaldate,price_ori)
+       values(seq_product.nextval,#{departureplace},#{arrivalplace},#{price},#{filename},#{personal},#{product_name},#{departuredate},#{arrivaldate},#{price})
+   </insert>
+
+   <update id="update" parameterType="Product">
+      update product set departuredate=#{departuredate},arrivaldate=#{arrivaldate},departureplace=#{departureplace},
+      arrivalplace=#{arrivalplace},price=#{price},filename=#{filename}, product_name=#{product_name},
+      personal=#{personal},price_ori=#{price} where product_id=#{product_id}
+   </update>
+   
+   <delete id="delete" parameterType="int">
+      delete from product where product_id=#{product_id}
+   </delete>
+   
+   <update id="eventing" parameterType="Product">
+      update product set price=#{price} where product_id=#{product_id}
+   </update>
+   
+   <update id="eventend" parameterType="int">
+      update product set price=price_ori where product_id=#{product_id}
+   </update>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

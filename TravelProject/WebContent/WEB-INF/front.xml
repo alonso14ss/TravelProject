@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:p="http://www.springframework.org/schema/p"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:mvc="http://www.springframework.org/schema/mvc"
+   xmlns:aop="http://www.springframework.org/schema/aop"
+   xmlns:tx="http://www.springframework.org/schema/tx"
+   xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+   
+   <!-- 공통 로직이 아니라, 요청을 처리하는 컨트롤러 관련 빈 객체만을 
+   등록할 예정 -->
+   
+   <!-- HandlerMapping  결정 : 
+   @어노테이션이 붙은 컨트롤러 클래스를 하위 컨트롤러로 결정짓는 객체-->
+   <bean id="handlerMapping" 
+      class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>      
+   
+   
+   <!-- ViewResolver  결정 -->
+   <bean id="viewResolver" 
+      class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+      p:prefix="/"
+      p:suffix=".jsp"/>   
+
+   <!-- 정적자원(image,html,css,js, 동영상..)까지 
+      DispatcherSerlvet이 요청을 처리하지 않게 하자 
+      따라서 아래의 태그를 등록하면, 다시 디폴트 서블릿이 정상화 된다..
+      -->
+   
+   
+      
+   <!-- 모든 컨트롤러를 일일이 등록하지 말고, 자동 등록을 이용해보자 -->
+   <context:component-scan base-package="com.travel.controller">
+   </context:component-scan>      
+      
+   <mvc:default-servlet-handler/>
+   <mvc:annotation-driven/>
+   
+   <!-- 파일업로드 빈 등록 -->
+   <bean id="multipartResolver" 
+      class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+   
+   <!-- responbody 응답시 한글처리  -->
+   <mvc:annotation-driven>
+      <mvc:message-converters>
+         <bean 
+            class="org.springframework.http.converter.StringHttpMessageConverter">
+            <property name="supportedMediaTypes">
+               <list>
+                  <value>text/html;charset=utf-8</value>
+                  <value>application/json;charset=UTF-8</value>
+               </list>
+            </property>      
+         </bean>
+      </mvc:message-converters>
+   </mvc:annotation-driven>
+   
+   
+
+   <!-- 언제, 어디에, 어떤방법으로 동작할지를 서술-->
+<!--    
+   <aop:config>
+      <aop:aspect ref="logger">
+         <aop:pointcut expression="execution(public * com.travel.controller..*(..))" id="controllerPointcut"/>
+         <aop:after method="log" pointcut-ref="controllerPointcut"/>      
+      </aop:aspect>
+   </aop:config>
+ -->   
+ 
+    
+    <!-- 공통코드로 사용될 Aspect 등록 -->
+    <!-- <bean id="testLog" class="com.travel.log.TestLog"/> -->
+    
+    
+    <!-- aop -->
+<!--     
+   <aop:config>
+      <aop:aspect ref="testLog">
+         <aop:pointcut expression="execution(public * com.travel.controller.product.ProductController.selectAll())" id="productControllerPointcut"/>
+         <aop:before method="showMessage" pointcut-ref="productControllerPointcut"/>
+      </aop:aspect>
+   </aop:config>    
+ --> 
+
+    <!-- 로그인 체크 빈 객체 등록 -->
+    <bean id="memberSessionCheckAspect" class="com.travel.aop.MemberSessionCheckAspect"/>
+    <bean id="adminSessionCheckAspect" class="com.travel.aop.AdminSessionCheckAspect"/>
+    
+    <!--어떤 공통코드를 어느 지점에, 어떤 시점에 넣을지.. -->
+   <aop:config>
+      <aop:aspect ref="memberSessionCheckAspect">
+         <aop:pointcut 
+            expression="execution(public * com.travel.controller.shopping.ShoppingController.*(..)) || execution(public * com.travel.controller.cs.CsController.*(..)) || execution(public * com.travel.controller.member.MemberController.*(..))" 
+            id="memberPointcut"/>
+         <aop:around method="sessionCheck" pointcut-ref="memberPointcut"/>         
+      </aop:aspect>
+   </aop:config>
+       
+   <aop:config>
+      <aop:aspect ref="adminSessionCheckAspect">
+         <aop:pointcut 
+            expression="execution(public * com.travel.controller.admin.AdminController.*(..)) || execution(public * com.travel.controller.order.OrderController.*(..))"  id="adminPointcut"/>
+         <aop:around method="sessionCheck" pointcut-ref="adminPointcut"/>         
+      </aop:aspect>
+   </aop:config>    
+    
+    <bean class="com.travel.controller.common.GlobalExceptionHandler"/>
+    
+</beans>
+
+
+
+
+
+
+
+

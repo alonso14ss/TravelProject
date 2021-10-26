@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderSummary">
+   
+   <!-- 주문 요약은 회원,배송받는자 테이블과 조인이 필요하다  -->
+   <resultMap type="OrderSummary" id="joinMap">
+      <id column="order_summary_id" property="order_summary_id"/>
+      <result column="total_pay" property="total_pay"/>
+      <result column="order_date" property="order_date"/>
+      <association column="member_id" property="member" select="Member.select"/>      
+      
+   </resultMap>
+
+   <insert id="insert" parameterType="OrderSummary">
+      insert into order_summary(member_id, total_pay,pay_method)
+      values(
+      #{member.member_id},#{total_pay},#{pay_method})
+      
+      <!-- 주문요약이 등록되면, 주문상세 테이블에서 참조할 pk를 반환해야
+      하기 때문에  -->
+      <selectKey 
+            keyColumn="order_summary_id" 
+            resultType="int" 
+            keyProperty="order_summary_id" 
+            order="AFTER">
+         select (select max(order_summary_id) from order_summary) as order_summary_id from dual
+      </selectKey>
+   </insert>
+      
+   <select id="selectAll" resultMap="joinMap">
+      select * from order_summary 
+      order by order_summary_id desc
+   </select>
+   
+   <select id="select" parameterType="int" resultMap="joinMap">
+      select * from order_summary
+      where order_summary_id=#{order_summary_id}   
+   </select>   
+   
+   <!-- 해당 회원의 모든 주문목록 가져오기 -->
+   <select id="selectAllByMember" parameterType="Member" resultMap="joinMap">
+      select order_summary_id
+      , total_pay
+      , order_date
+      , pay_method
+      , o.member_id as member_id
+      from order_summary o, member m
+      where o.member_id=m.member_id
+      and id=#{id} and password=#{password}
+   </select>   
+   
+   <delete id="delete" parameterType="int">
+      delete from order_summary where order_summary_id=#{order_summary_id}
+   </delete>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
